@@ -3,46 +3,67 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const authMiddleWare = (req, res, next) => {
-    const token = req.headers.token.split(' ')[1]; // Assuming the token
+    const authHeader = req.headers['authorization'];
+    if (!authHeader) {
+        return res.status(401).json({
+            status: 'ERR',
+            message: 'Authorization header missing',
+        });
+    }
 
-    jwt.verify(token, process.env.ACCESS_TOKEN, function(err, user) {
+    const token = authHeader.split(' ')[1];
+
+    jwt.verify(token, process.env.ACCESS_TOKEN, (err, user) => {
         if (err) {
-            return res.status(404).json({
+            return res.status(403).json({
                 status: 'ERR',
-                message: 'The authemtication'
+                message: 'Invalid token',
             });
         }
+
         if (user?.isAdmin) {
-            next()
+            next();
         } else {
-            return res.status(404).json({
+            return res.status(403).json({
                 status: 'ERR',
-                message: 'The authemtication'
+                message: 'Access denied',
             });
         }
     });
-}
+};
+
 
 const authUserMiddleWare = (req, res, next) => {
-    const token = req.headers.token.split(' ')[1]; // Assuming the token
+    const authHeader = req.headers['authorization'];
+    if (!authHeader) {
+        return res.status(401).json({
+            status: 'ERR',
+            message: 'Authorization header missing',
+        });
+    }
+
+    const token = authHeader.split(' ')[1];
     const userId = req.params.id;
-    jwt.verify(token, process.env.ACCESS_TOKEN, function(err, user) {
+
+    jwt.verify(token, process.env.ACCESS_TOKEN, (err, user) => {
         if (err) {
-            return res.status(404).json({
+            return res.status(403).json({
                 status: 'ERR',
-                message: 'The authemtication'
+                message: 'Invalid token',
             });
         }
+
         if (user?.isAdmin || user?.id === userId) {
-            next()
+            next();
         } else {
-            return res.status(404).json({
+            return res.status(403).json({
                 status: 'ERR',
-                message: 'The authemtication'
+                message: 'Access denied',
             });
         }
     });
-}
+};
+
 
 module.exports = {
     authMiddleWare,
