@@ -12,7 +12,7 @@ const authMiddleWare = (req, res, next) => {
     }
 
     const token = authHeader.split(' ')[1];
-
+    console.log('token', token)
     jwt.verify(token, process.env.ACCESS_TOKEN, (err, user) => {
         if (err) {
             return res.status(403).json({
@@ -20,6 +20,7 @@ const authMiddleWare = (req, res, next) => {
                 message: 'Invalid token',
             });
         }
+        
 
         if (user?.isAdmin) {
             next();
