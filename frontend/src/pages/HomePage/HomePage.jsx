@@ -10,39 +10,55 @@ import { useQuery } from "react-query";
 import * as ProductService from "../../services/ProductService";
 import { useSelector } from "react-redux";
 import Loading from "../../components/LoadingComponent/Loading";
+import { useDebounce } from "../../hooks/useDebounce";
 
 
 
 const HomePage = () => {
   const searchProduct = useSelector((state) => state?.product?.search)
+  const searchDebounce = useDebounce(searchProduct, 1000)
   const refSearch = useRef()
   const [loading, setLoading] = useState(false)
   const [stateProducts, setStateProducts] = useState([])
+  const [limit, setLitmit] = useState(6)
   const arr = ["TV", "Tủ Lạnh", "Laptop", "Điện Thoại"];
-  const fetchProductAll = async (search) => {
-    const res = await ProductService.getAllProduct(search);
+  const fetchProductAll = async (content) => {
+    const limit = content?.queryKey && content?.queryKey[1]
+    const search = content?.queryKey && content?.queryKey[2]
+    const res = await ProductService.getAllProduct(search, limit);
     if (search.length > 0 || refSearch.current) {
       setStateProducts(res?.data)
+      return []
     } else {
       return res
     }
   }
 
-  useEffect(() => {
-    if (refSearch.current) {
-      setLoading(true)
-      fetchProductAll(searchProduct)
-    }
-    refSearch.current = true
-      setLoading(false)
-  }, [searchProduct])
+  // const fetchProductAll = async (search) => {
+  //   const res = await ProductService.getAllProduct(search);
+  //   if (search.length > 0 || refSearch.current) {
+  //     setStateProducts(res?.data)
+  //   } else {
+  //     return res
+  //   }
+  // }
 
-  const {isLoading, data: products} = useQuery(['products'], fetchProductAll, { retry: 3, retryDelay: 1000 });
+  // useEffect(() => {
+  //   if (refSearch.current) {
+  //     setLoading(true)
+  //     fetchProductAll(searchDebounce)
+  //   }
+  //   refSearch.current = true
+  //     setLoading(false)
+  // }, [searchDebounce])
+
+  const {isLoading, data: products} = useQuery(['products', limit, searchDebounce], fetchProductAll, { retry: 3, retryDelay: 1000 });
   console.log("data", searchProduct);
 
   useEffect(() => {
     if (products?.data?.length > 0) {
       setStateProducts(products?.data)
+      // return []
     }
   }, [products])
 
@@ -85,6 +101,7 @@ const HomePage = () => {
               borderRadius: "4px",
             }}
               styleTextButton={{ fontWeight: "500" }}
+              onClick={() => setLitmit((prev) => prev + 6)}
           />
           </div>
         </div>
