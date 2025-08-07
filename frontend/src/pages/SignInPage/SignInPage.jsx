@@ -6,7 +6,7 @@ import imagelogo from '../../assets/images/logo-login.png'
 import { Image } from 'antd'
 import { useState } from 'react'
 import { EyeFilled, EyeInvisibleFilled } from '@ant-design/icons'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useMutationHooks } from '../../hooks/userMutationHook'
 import * as UserService from '../../services/UserService'
 import Loading from '../../components/LoadingComponent/Loading'
@@ -19,6 +19,7 @@ import { toast } from 'react-toastify'
 
 const SignInPage = () => {
   const [isShowPassword, setIsShowPassword] = useState(false);
+  const location = useLocation()
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const dispatch = useDispatch()
@@ -32,7 +33,6 @@ const SignInPage = () => {
 
   useEffect(() => {
     if (isSuccess) {
-      navigate('/');
       localStorage.setItem('access_token', JSON.stringify(data?.access_token));
       if (data?.access_token) {
         const decoded = jwtDecode(data?.access_token)
@@ -40,6 +40,13 @@ const SignInPage = () => {
         if (decoded?.id) {
           handleGetDetailsUser(decoded?.id, data?.access_token)
         }
+      }
+
+      // Chỉ điều hướng sau khi xử lý user
+      if(location?.state) {
+        navigate(location.state);
+      } else {
+        navigate('/')
       }
     } 
   }, [isSuccess])

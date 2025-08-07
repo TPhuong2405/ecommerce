@@ -1,5 +1,4 @@
 import axios from "axios"
-import API from "./axiosInstance";
 
 export const axiosJWT = axios.create()
 
@@ -14,7 +13,11 @@ export const signupUser = async (data) => {
 }
 
 export const getDetailsUser = async (id, access_token) => {
-    const res = await API.get(`${process.env.REACT_APP_API_URL}/user/get-details/${id}`)
+    const res = await axiosJWT.get(`${process.env.REACT_APP_API_URL}/user/get-details/${id}`, {
+        headers: {
+            token: `Bearer ${access_token}`
+        }
+    });
     return res.data;
 }
 

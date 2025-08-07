@@ -68,7 +68,7 @@ export const WrapperQualityProduct = styled.div`
 
 // ...existing code...
 export const WrapperInputNumber = styled(InputNumber)`
-    width: 60px !important;
+    width: 40px !important;
     border-top: none;
     border-bottom: none;
     

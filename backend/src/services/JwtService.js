@@ -6,7 +6,7 @@ const genneraAccessToken = (payload) => {
     const access_token = jwt.sign(
         { ...payload },
         process.env.ACCESS_TOKEN,
-        { expiresIn: '24h' }
+        { expiresIn: '30s' }
     );
     return access_token;
 }
