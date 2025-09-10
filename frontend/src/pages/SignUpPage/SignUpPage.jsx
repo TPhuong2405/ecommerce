@@ -9,7 +9,7 @@ import { EyeFilled, EyeInvisibleFilled } from '@ant-design/icons'
 import { WrapperTextLight } from './style'
 import { useNavigate } from 'react-router-dom'
 import * as UserService from '../../services/UserService'
-import { useMutationHooks } from '../../hooks/userMutationHook'
+import { useMutationHooks } from '../../hooks/useMutationHook'
 import Loading from '../../components/LoadingComponent/Loading'
 import * as message from '../../components/Message/Message'
 

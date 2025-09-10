@@ -17,7 +17,11 @@ export const StyleNameProduct = styled.div`
     font-size: 12px;
     line-height: 16px;
     color: rgb(56, 56, 61);
-
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
 `
 
 export const WrapperReporText = styled.div`

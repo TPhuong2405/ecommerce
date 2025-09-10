@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { WrapperHeader } from './style'
-import { DeleteOutlined, EditOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons'
+import { DeleteOutlined, EditOutlined, SearchOutlined } from '@ant-design/icons'
 import { Button, Form, Space } from 'antd'
 import TableComponent from '../TableComponent/TableComponent'
 import InputComponent from '../InputComponent/InputComponent'
@@ -12,7 +12,7 @@ import { getBase64 } from '../../utils'
 import * as message from '../../components/Message/Message'
 // import useSelector from "react-redux/es/hooks/useSelector";
 import { useSelector } from "react-redux";
-import { useMutationHooks } from '../../hooks/userMutationHook'
+import { useMutationHooks } from '../../hooks/useMutationHook'
 import * as UserService from "../../services/UserService";
 import { useQuery } from 'react-query'
 
@@ -69,7 +69,7 @@ const AdminUser = () => {
   );
 
   const getAllUsers = async () => {
-    const res = await UserService.getAllUser();
+    const res = await UserService.getAllUser(user?.access_token);
     console.log('res', res);
     return res;
   }
@@ -231,14 +231,28 @@ const AdminUser = () => {
     {
       title: "Ngày tạo",
       dataIndex: "createdAt",
-      sorter: (a, b) => a.createdAt.length - b.createdAt.length,
+      sorter: (a, b) => new Date(a.createdAt) - new Date(b.createdAt),
+      render: (value) => value ? new Date(value).toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' }) : "bị lỗi",
       ...getColumnSearchProps('createdAt'),
     },
     {
-      title: "Ngày cập nhật tài khoản",
-      dataIndex: "updatedAt",
-      sorter: (a, b) => a.updatedAt.length - b.updatedAt.length,
-      ...getColumnSearchProps('updatedAt'),
+      title: "Avatar",
+      dataIndex: "avatar",
+      sorter: (a, b) => a.avatar.length - b.avatar.length,
+      render: (value) =>
+        value ? (
+          <img
+            src={value}
+            alt="avatar"
+            style={{
+              height: "40px",
+              width: "40px",
+              borderRadius: "50%",
+              objectFit: "cover",
+            }}
+          />
+        ) : null,
+      ...getColumnSearchProps('avatar'),
     },
     {
       title: "Action",
@@ -246,6 +260,7 @@ const AdminUser = () => {
       render: renderAction
     },
   ];
+
   const dataTable = users?.data?.length && users?.data?.map((user) => {
     return {
       ...user,
@@ -322,7 +337,7 @@ const AdminUser = () => {
   };
 
   const onUpdateUser = () => {
-    mutationUpdate.mutate({ id: rowSelected, token: user?.access_oken, ...stateUserDetails }, {
+    mutationUpdate.mutate({ id: rowSelected, token: user?.access_token, ...stateUserDetails }, {
       onSettled: () => {
         queryUser.refetch();
       }
@@ -332,7 +347,7 @@ const AdminUser = () => {
   return (
     <div>
       <WrapperHeader>Quản lý người dùng</WrapperHeader>
-        <div style={{ marginTop: "20px" }}>
+      <div style={{ marginTop: "20px" }}>
         <TableComponent handleDeleteManyUser={handleDeleteManyUser} columns={columns} isLoading={isLoadingUsers} data={dataTable} onRow={(record, rowIndex) => {
           return {
             onClick: (event) => {

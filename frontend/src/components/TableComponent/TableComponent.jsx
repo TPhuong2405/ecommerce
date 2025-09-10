@@ -56,6 +56,7 @@ const TableComponent = (props) => {
             cursor: "pointer",
             width: "60px",
             height: "auto",
+            borderRadius: '6px'
           }}
           onClick={handleDeleteAll}
         >

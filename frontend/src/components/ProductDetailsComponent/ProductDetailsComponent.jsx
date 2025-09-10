@@ -7,15 +7,19 @@ import ButtonComponent from '../ButtonComponent/ButtonComponent'
 import * as ProductService from "../../services/ProductService";
 import { useQuery } from 'react-query'
 import Loading from '../LoadingComponent/Loading'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { addOrderProduct } from '../../redux/slides/orderSlide'
+import { convertPridce } from '../../utils'
 
 
-const ProductDetaialsComponent = ({idProduct}) => {
+const ProductDetailsComponent = ({idProduct}) => {
   const [numProduct, setNumProduct] = useState(1)
   const user = useSelector((state) => state.user)
   const navigate = useNavigate()
   const location = useLocation()
+  const dispatch = useDispatch()
+
   const onChange = (value) => {
     setNumProduct(Number(value))
   }
@@ -36,10 +40,31 @@ const ProductDetaialsComponent = ({idProduct}) => {
   }
 
   const handleAddOrderProduct = () => {
-    if(!user?.id) {
-      navigate('/sign-in', {state: location?.pathname})
+    if (!user?.id) {
+      navigate('/sign-in', { state: location?.pathname });
+    } else {
+      // {
+        //   name: { type: String, required: true },
+      //   amount: { type: Number, required: true },
+      //   image: { type: String, required: true },
+      //   price: { type: Number, required: true },
+      //   product: {
+      //       type: mongoose.Schema.Types.ObjectId,
+      //       ref: 'Product',
+      //       required: true
+      //   }
+      // }
+      dispatch(addOrderProduct({
+        orderItem: {
+          name: productsDetails?.name,
+          amount: numProduct,
+          image: productsDetails?.image,
+          price: productsDetails?.price,
+          product: productsDetails?._id
+        }
+      }));
     }
-  }
+  };
 
   const {isLoading, data: productsDetails, isPreviousData } = useQuery(['product-details', idProduct], fetchGetDetailsProduct, { enabled: !!idProduct });
   
@@ -76,14 +101,14 @@ const ProductDetaialsComponent = ({idProduct}) => {
             <WrapperStyleTextSell> | Đã bán 1000+</WrapperStyleTextSell>
           </div>
           <WrapperPriceProduct>
-            <WrapperPriceTextProduct>{productsDetails?.price?.toLocaleString('vi-VN')}</WrapperPriceTextProduct>
+            <WrapperPriceTextProduct>{convertPridce(productsDetails?.price)}</WrapperPriceTextProduct>
           </WrapperPriceProduct>
           <WrapperAddressProduct>
             <span>Giao đến </span>
             <span className='address'>{user?.address}</span> - 
             <span className='change-address'> Đổi địa chỉ</span>
           </WrapperAddressProduct>
-          <div style={{ margin: '10px 0 20px', padding: '10px 0', borderTop: '1p solod #e5e5e5', borderBottom: '1px solid #e5e5e5' }}>
+          <div style={{ margin: '10px 0 20px', padding: '10px 0', borderTop: '1px solid #e5e5e5', borderBottom: '1px solid #e5e5e5' }}>
             <div style={{ marginBottom: '10px' }}>Số lượng</div>
             <WrapperQualityProduct>
               <button style={{ border: 'none', background: 'transparent', cursor: 'pointer' }} onClick={() => handleChangeCount('decrease')}>
@@ -120,7 +145,7 @@ const ProductDetaialsComponent = ({idProduct}) => {
                 borderRadius: '4px',
               }}
               textButton={'Mua trả sau'}
-              styleTextButton={{ color: 'rgb(13, 92, 182)', fontSize: '15p', fontWeight: '700' }}
+              styleTextButton={{ color: 'rgb(13, 92, 182)', fontSize: '15px', fontWeight: '700' }}
             >
             </ButtonComponent>
           </div>
@@ -130,4 +155,4 @@ const ProductDetaialsComponent = ({idProduct}) => {
   )
 }
 
-export default ProductDetaialsComponent
+export default ProductDetailsComponent;

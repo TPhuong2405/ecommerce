@@ -5,7 +5,7 @@ import { Button, Form, Modal, Select, Space } from "antd";
 import TableComponent from "../TableComponent/TableComponent";
 import InputComponent from "../InputComponent/InputComponent";
 import { getBase64, renderOptions } from "../../utils";
-import { useMutationHooks } from "../../hooks/userMutationHook";
+import { useMutationHooks } from "../../hooks/useMutationHook";
 import * as ProductService from "../../services/ProductService";
 import Loading from "../LoadingComponent/Loading";
 import * as message from '../../components/Message/Message'
@@ -35,7 +35,8 @@ const AdminProduct = () => {
     image: "",
     type: "",
     countInStock: "",
-    newType: ''
+    newType: '',
+    discount: '',
   });
   const [stateProductDetails, setStateProductDetails] = useState({
     name: "",
@@ -45,6 +46,7 @@ const AdminProduct = () => {
     image: "",
     type: "",
     countInStock: "",
+    discount: '',
   });
 
   const [form] = Form.useForm(); 
@@ -93,6 +95,7 @@ const AdminProduct = () => {
         image: res?.data?.image,
         type: res?.data?.type,
         countInStock: res?.data?.countInStock,
+        discount: res?.data?.discount,
       })
     }
     setIsLoadingUpdate(false);
@@ -219,13 +222,16 @@ const AdminProduct = () => {
     {
       title: "Name",
       dataIndex: "name",
-      render: (text) => <a>{text}</a>,
+      width: '410px',
+      render: (text) => <a style={{ overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical', maxWidth: '100%' }}>{text}</a>,
       sorter: (a, b) => a.name.length - b.name.length,
       ...getColumnSearchProps('name'),
     },
     {
       title: "Price",
       dataIndex: "price",
+      width: '214px',
+      render: (text) => <a style={{ overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical', maxWidth: '100%' }}>{text}</a>,
       sorter: (a, b) => a.price - b.price,
       filters: [
         {
@@ -248,6 +254,8 @@ const AdminProduct = () => {
     {
       title: "Rating",
       dataIndex: "rating",
+      width: '248px',
+      render: (text) => <a style={{ overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical', maxWidth: '100%' }}>{text}</a>,
       sorter: (a, b) => a.rating - b.rating,
       filters: [
         {
@@ -270,6 +278,26 @@ const AdminProduct = () => {
     {
       title: "Type",
       dataIndex: "type",
+      width: '330px',
+      render: (text) => <a style={{ overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical', maxWidth: '100%' }}>{text}</a>,
+    },
+    {
+      title: "Avatar",
+      dataIndex: "image",
+      width: '100px',
+      render: (value) =>
+        value ? (
+          <img
+            src={value}
+            alt="avatar"
+            style={{
+              height: "40px",
+              width: "40px",
+              borderRadius: "50%",
+              objectFit: "cover",
+            }}
+          />
+        ) : null,
     },
     {
       title: "Action",
@@ -320,6 +348,7 @@ const AdminProduct = () => {
       image: "",
       type: "",
       countInStock: "",
+      discount: '',
     })
     form.resetFields();
   };
@@ -355,6 +384,7 @@ const AdminProduct = () => {
       image: "",
       type: "",
       countInStock: "",
+      discount: '',
     })
     form.resetFields();
   };
@@ -368,6 +398,7 @@ const AdminProduct = () => {
       image: stateProduct.image,
       type: stateProduct.type === 'add_type' ? stateProduct.newType : stateProduct.type,
       countInStock: stateProduct.countInStock,
+      discount: stateProduct.discount,
     }
     mutation.mutate(params, {
       onSettled: () => {
@@ -568,6 +599,20 @@ const AdminProduct = () => {
             </Form.Item>
 
             <Form.Item
+              label="Discount"
+              name="discount"
+              rules={[
+                { required: true, message: "Please input your discount of product!" },
+              ]}
+            >
+              <InputComponent
+                value={stateProduct.discount}
+                onChange={handleOnchange}
+                name="discount"
+              />
+            </Form.Item>
+
+            <Form.Item
               label="Image"
               name="image"
               rules={[
@@ -692,6 +737,20 @@ const AdminProduct = () => {
                 value={stateProductDetails.rating}
                 onChange={handleOnchangeDetails}
                 name="rating"
+              />
+            </Form.Item>
+
+            <Form.Item
+              label="Discount"
+              name="discount"
+              rules={[
+                { required: true, message: "Please input your count discount!" },
+              ]}
+            >
+              <InputComponent
+                value={stateProductDetails.discount}
+                onChange={handleOnchangeDetails}
+                name="discount"
               />
             </Form.Item>
 

@@ -1,6 +1,6 @@
 import React from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import ProductDetaialsComponent from '../../components/ProductDetaialsComponent/ProductDetaialsComponent'
+import ProductDetaialsComponent from '../../components/ProductDetailsComponent/ProductDetailsComponent'
 // import { Style } from './style'
 
 const ProductDetailsPage = () => {
